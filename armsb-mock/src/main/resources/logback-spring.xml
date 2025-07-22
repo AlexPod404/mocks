@@ -23,19 +23,10 @@
         </rollingPolicy>
     </appender>
     
-    <!-- JSON appender for structured logging -->
+    <!-- JSON-like appender for structured logging -->
     <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-            <providers>
-                <timestamp/>
-                <version/>
-                <logLevel/>
-                <message/>
-                <mdc/>
-                <arguments/>
-                <loggerName/>
-                <threadName/>
-            </providers>
+        <encoder>
+            <pattern>{"timestamp": "%d{yyyy-MM-dd HH:mm:ss.SSS}", "level": "%level", "thread": "%thread", "logger": "%logger{36}", "message": "%msg"}%n</pattern>
         </encoder>
     </appender>
     
