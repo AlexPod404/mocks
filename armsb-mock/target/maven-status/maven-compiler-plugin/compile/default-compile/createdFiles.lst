@@ -1,0 +1,11 @@
+sb1/stub/armsbmock/config/ArmsbMockConfig$ClientCard.class
+sb1/stub/armsbmock/controller/ConfigurationController.class
+sb1/stub/armsbmock/service/DelayService.class
+sb1/stub/armsbmock/config/ArmsbMockConfig.class
+sb1/stub/armsbmock/data/ClientsJsonData.class
+sb1/stub/armsbmock/ArmsbMockApplication.class
+sb1/stub/armsbmock/config/ArmsbMockConfig$Tasks.class
+sb1/stub/armsbmock/config/ArmsbMockConfig$Cti.class
+sb1/stub/armsbmock/config/ArmsbMockConfig$Clients.class
+sb1/stub/armsbmock/controller/ClientsController.class
+sb1/stub/armsbmock/data/JsonResponses.class
