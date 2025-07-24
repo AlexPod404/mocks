@@ -44,6 +44,8 @@ armsb:
       # To add delays, uncomment and configure like:
       # "/clients/srvgetclientlist": 200
       # "/tasks/getByFilter": 150
+      # "/cti/getCommunications": 300
+      # "/sbpemployeeinfo/v1/employee": 50
     clients:
       enabled: ${ARMSB_CLIENTS_ENABLED:true}
     tasks:

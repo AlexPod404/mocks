@@ -138,6 +138,18 @@ public class TasksController {
         }
     }
 
+    @Operation(summary = "Get tasks by filter (simple)")
+    @RequestMapping(value = "/tasks/get", method = RequestMethod.POST, produces = "application/json")
+    public String getTasksByFilter(@RequestBody String requestBody, HttpServletRequest request) {
+        log.info("TasksController.getTasksByFilter called");
+        log.debug("Request body: {}", requestBody);
+        
+        delayService.applyDelay(request.getRequestURI());
+        String response = TasksJsonData.tasksGetByFilter();
+        log.info("TasksController.getTasksByFilter completed");
+        return response;
+    }
+
     @Operation(summary = "Get task by ID")
     @RequestMapping(value = "/tasks/getTaskById", method = RequestMethod.POST, produces = "application/json")
     public String getTask(HttpServletRequest request, HttpServletResponse response) {

@@ -82,17 +82,6 @@ public class ClientsController {
         return response;
     }
 
-    @Operation(summary = "Get tasks by filter")
-    @RequestMapping(value = "/tasks/get", method = RequestMethod.POST, produces = "application/json")
-    public String getTasksByFilter(@RequestBody String requestBody, HttpServletRequest request) {
-        log.info("ClientsController.getTasksByFilter called");
-        log.debug("Request body: {}", requestBody);
-        
-        delayService.applyDelay(request.getRequestURI());
-        String response = ClientsJsonData.tasksGetByFilter();
-        log.info("ClientsController.getTasksByFilter completed");
-        return response;
-    }
 
     @Operation(summary = "Search clients by last name")
     @RequestMapping(value = "/clients/srvgetclientlist/clients/searchByLastName", method = RequestMethod.POST, produces = "application/json")
