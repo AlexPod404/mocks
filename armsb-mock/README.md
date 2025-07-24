@@ -45,6 +45,11 @@ server:
 armsb:
   mock:
     default-delay: 100  # Default delay in milliseconds
+    delays:
+      # Per-endpoint delay configuration
+      "/clients/srvgetclientlist": 200
+      "/tasks/getByFilter": 150
+      "/cti/getCommunications": 300
     clients:
       enabled: true
     tasks:
@@ -92,15 +97,58 @@ Spring Boot Actuator provides monitoring endpoints at `/actuator`:
 
 ## Delay Configuration
 
-Configure response delays dynamically:
+Configure response delays both globally and per-endpoint:
+
+### Global Delay Configuration
 
 ```bash
-# Get current delay
+# Get current global delay
 curl http://localhost:8080/getDelta
 
-# Set delay to 500ms
+# Set global delay to 500ms
 curl http://localhost:8080/setDelta/500
 ```
+
+### Per-Endpoint Delay Configuration
+
+Configure specific delays for individual endpoints using configuration or dynamic API:
+
+#### Configuration File (application.yaml)
+```yaml
+armsb:
+  mock:
+    default-delay: 100  # Default delay in milliseconds
+    delays:
+      # Per-endpoint delay configuration
+      "/clients/srvgetclientlist": 200
+      "/tasks/getByFilter": 150
+      "/cti/getCommunications": 300
+```
+
+#### Dynamic API Configuration
+```bash
+# Set delay for specific endpoint
+curl -X POST "http://localhost:8080/setDeltaForEndpoint?endpoint=/clients/srvgetclientlist&delay=250"
+
+# Get delay for specific endpoint
+curl "http://localhost:8080/getDelayForEndpoint?endpoint=/clients/srvgetclientlist"
+
+# Remove delay configuration for endpoint
+curl -X DELETE "http://localhost:8080/removeDelayForEndpoint?endpoint=/clients/srvgetclientlist"
+
+# Get all configured endpoint delays
+curl http://localhost:8080/getAllDelays
+```
+
+#### Delay Priority
+
+Delays are applied in the following priority order:
+1. **Runtime configured delays** (set via `setDeltaForEndpoint` API)
+2. **Configuration file delays** (from `application.yaml`)
+3. **Global delay** (if no endpoint-specific delay is configured)
+4. **Default delay** (fallback value: 100ms)
+
+This allows for flexible delay management where runtime changes take precedence over static configuration.
 
 ## Endpoints Overview
 
