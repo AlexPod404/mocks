@@ -25,9 +25,9 @@ public class ClientCardController {
 
     @Operation(summary = "Get employee information for client card")
     @RequestMapping(value = "/clientcard/sbpemployeeinfo/v1/employee", method = RequestMethod.GET, produces = "application/json")
-    public String getEmployee() {
+    public String getEmployee(HttpServletRequest request) {
         log.info("ClientCardController.getEmployee called");
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         String response = ClientCardJsonData.employee();
         log.info("ClientCardController.getEmployee completed");
         return response;
@@ -40,7 +40,7 @@ public class ClientCardController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientCardJsonData.getClientCard_new();
             log.info("ClientCardController.getByClient completed");
             return responseData;
@@ -57,7 +57,7 @@ public class ClientCardController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientCardJsonData.getSbpContextInit();
             log.info("ClientCardController.getSbpContext completed");
             return responseData;
@@ -74,7 +74,7 @@ public class ClientCardController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientCardJsonData.forSend();
             log.info("ClientCardController.forSend completed");
             return responseData;
@@ -91,7 +91,7 @@ public class ClientCardController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientCardJsonData.send();
             log.info("ClientCardController.send completed");
             return responseData;
@@ -108,7 +108,7 @@ public class ClientCardController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientCardJsonData.getCompanies();
             log.info("ClientCardController.getCompanies completed");
             return responseData;
@@ -125,7 +125,7 @@ public class ClientCardController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientCardJsonData.getInfoByCompanyId();
             log.info("ClientCardController.getInfoByCompanyId completed");
             return responseData;
@@ -142,7 +142,7 @@ public class ClientCardController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientCardJsonData.getTeamsGet();
             log.info("ClientCardController.getTeamsGet completed");
             return responseData;
@@ -154,7 +154,7 @@ public class ClientCardController {
 
     @Operation(summary = "Client card operations", description = "Main client card endpoint handling various operations")
     @RequestMapping(value = "/clients/getClientCardFromCRMandEPK", method = RequestMethod.POST, produces = "application/json")
-    public String getClientCard(@RequestBody String requestBody) {
+    public String getClientCard(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("ClientCardController.getClientCard called with request length: {}", requestBody.length());
         log.debug("Request body: {}", requestBody);
         
@@ -291,7 +291,7 @@ public class ClientCardController {
             log.debug("Default response: client card from EPK");
         }
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         log.info("ClientCardController.getClientCard completed");
         return response;
     }
@@ -303,7 +303,7 @@ public class ClientCardController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientCardJsonData.createStructure();
             log.info("ClientCardController.createStructure completed");
             return responseData;
@@ -320,7 +320,7 @@ public class ClientCardController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientCardJsonData.setRegionConfig();
             log.info("ClientCardController.setRegionConfig completed");
             return responseData;

@@ -45,6 +45,12 @@ server:
 armsb:
   mock:
     default-delay: 100  # Default delay in milliseconds
+    # Endpoint-specific delays (in milliseconds)
+    delays:
+      "/clients/srvgetclientlist": 150
+      "/tasks/getByFilter": 200
+      "/cti/getCommunications": 50
+      "/clientcard/positions/get": 300
     clients:
       enabled: true
     tasks:
@@ -92,15 +98,64 @@ Spring Boot Actuator provides monitoring endpoints at `/actuator`:
 
 ## Delay Configuration
 
-Configure response delays dynamically:
+The application supports both global and endpoint-specific delay configuration to simulate realistic response times.
+
+### Global Delay
+
+Configure a global default delay that applies to all endpoints:
+
+```yaml
+armsb:
+  mock:
+    default-delay: 100  # Default delay in milliseconds for all endpoints
+```
+
+### Endpoint-Specific Delays
+
+Configure delays for specific endpoints in `application.yaml`:
+
+```yaml
+armsb:
+  mock:
+    delays:
+      "/clients/srvgetclientlist": 150
+      "/tasks/getByFilter": 200
+      "/cti/getCommunications": 50
+      "/clientcard/positions/get": 300
+      # Add more endpoint-specific delays as needed
+```
+
+### Dynamic Delay Management
+
+Configure response delays dynamically using the configuration API:
 
 ```bash
-# Get current delay
+# Get current global delay
 curl http://localhost:8080/getDelta
 
-# Set delay to 500ms
+# Set global delay to 500ms
 curl http://localhost:8080/setDelta/500
+
+# Set delay for specific endpoint
+curl -X POST "http://localhost:8080/setDeltaForEndpoint?endpoint=/clients/srvgetclientlist&delay=250"
+
+# Get delay for specific endpoint
+curl "http://localhost:8080/getDeltaForEndpoint?endpoint=/clients/srvgetclientlist"
+
+# Remove custom delay for specific endpoint
+curl -X DELETE "http://localhost:8080/removeDeltaForEndpoint?endpoint=/clients/srvgetclientlist"
+
+# Get all runtime delays
+curl http://localhost:8080/getAllDelays
 ```
+
+### Delay Priority
+
+The delay mechanism follows this priority order:
+1. **Runtime delays** - Set via API calls (highest priority)
+2. **Configuration delays** - Set in application.yaml
+3. **Global delta** - Set via setDelta API
+4. **Default delay** - Configured default-delay value (lowest priority)
 
 ## Endpoints Overview
 

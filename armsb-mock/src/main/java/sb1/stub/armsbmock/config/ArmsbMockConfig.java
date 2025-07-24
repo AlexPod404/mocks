@@ -4,12 +4,21 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "armsb.mock")
 public class ArmsbMockConfig {
     
     private long defaultDelay = 100L;
+    
+    /**
+     * Endpoint-specific delays configuration.
+     * Key: endpoint URI, Value: delay in milliseconds
+     */
+    private Map<String, Long> delays = new HashMap<>();
     
     private Clients clients = new Clients();
     private Tasks tasks = new Tasks();
