@@ -147,6 +147,9 @@ curl -X DELETE "http://localhost:8080/removeDeltaForEndpoint?endpoint=/clients/s
 
 # Get all runtime delays
 curl http://localhost:8080/getAllDelays
+
+# Get all configuration delays
+curl http://localhost:8080/getConfigDelays
 ```
 
 ### Delay Priority

@@ -80,4 +80,12 @@ public class ConfigurationController {
         return delayService.getRuntimeDelays();
     }
 
+    @Operation(summary = "Get all configuration delays", description = "Get all delays configured in application.yaml")
+    @RequestMapping(value = "/getConfigDelays", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Long> getConfigDelays() {
+        log.info("All configuration delays requested");
+        return delayService.getConfigurationDelays();
+    }
+
 }

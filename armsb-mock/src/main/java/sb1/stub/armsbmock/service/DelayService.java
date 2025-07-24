@@ -2,9 +2,11 @@ package sb1.stub.armsbmock.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sb1.stub.armsbmock.config.ArmsbMockConfig;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
@@ -19,8 +21,49 @@ public class DelayService {
      */
     private final Map<String, Long> runtimeDelays = new ConcurrentHashMap<>();
     
+    /**
+     * Configuration-based delays loaded from application properties
+     */
+    private final Map<String, Long> configurationDelays = new ConcurrentHashMap<>();
+    
     @Autowired
     private ArmsbMockConfig config;
+    
+    // Load individual delay configurations from environment or properties
+    @Value("${armsb.mock.delays./clients/srvgetclientlist:#{null}}")
+    private Long clientsSrvGetClientListDelay;
+    
+    @Value("${armsb.mock.delays./tasks/getByFilter:#{null}}")
+    private Long tasksGetByFilterDelay;
+    
+    @Value("${armsb.mock.delays./cti/getCommunications:#{null}}")
+    private Long ctiGetCommunicationsDelay;
+    
+    @Value("${armsb.mock.delays./clientcard/positions/get:#{null}}")
+    private Long clientCardPositionsGetDelay;
+    
+    @PostConstruct
+    public void initializeConfigurationDelays() {
+        // Initialize configuration delays from individual properties
+        if (clientsSrvGetClientListDelay != null) {
+            configurationDelays.put("/clients/srvgetclientlist", clientsSrvGetClientListDelay);
+            log.info("Configured delay for /clients/srvgetclientlist: {} ms", clientsSrvGetClientListDelay);
+        }
+        if (tasksGetByFilterDelay != null) {
+            configurationDelays.put("/tasks/getByFilter", tasksGetByFilterDelay);
+            log.info("Configured delay for /tasks/getByFilter: {} ms", tasksGetByFilterDelay);
+        }
+        if (ctiGetCommunicationsDelay != null) {
+            configurationDelays.put("/cti/getCommunications", ctiGetCommunicationsDelay);
+            log.info("Configured delay for /cti/getCommunications: {} ms", ctiGetCommunicationsDelay);
+        }
+        if (clientCardPositionsGetDelay != null) {
+            configurationDelays.put("/clientcard/positions/get", clientCardPositionsGetDelay);
+            log.info("Configured delay for /clientcard/positions/get: {} ms", clientCardPositionsGetDelay);
+        }
+        
+        log.info("Initialized configuration delays for {} endpoints", configurationDelays.size());
+    }
     
     /**
      * Apply delay without specifying endpoint (legacy method)
@@ -58,7 +101,7 @@ public class DelayService {
             }
             
             // Check configuration delays
-            Long configDelay = config.getDelays().get(endpoint);
+            Long configDelay = configurationDelays.get(endpoint);
             if (configDelay != null) {
                 log.debug("Using config delay for endpoint '{}': {} ms", endpoint, configDelay);
                 return configDelay;
@@ -99,7 +142,7 @@ public class DelayService {
             }
             
             // Check configuration delays
-            Long configDelay = config.getDelays().get(endpoint);
+            Long configDelay = configurationDelays.get(endpoint);
             if (configDelay != null) {
                 return configDelay;
             }
@@ -117,6 +160,13 @@ public class DelayService {
      */
     public Map<String, Long> getRuntimeDelays() {
         return new ConcurrentHashMap<>(runtimeDelays);
+    }
+    
+    /**
+     * Get all configuration delays
+     */
+    public Map<String, Long> getConfigurationDelays() {
+        return new ConcurrentHashMap<>(configurationDelays);
     }
     
     public void setGlobalDelta(long delta) {

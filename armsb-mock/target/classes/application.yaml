@@ -40,13 +40,12 @@ armsb:
   mock:
     default-delay: ${ARMSB_DEFAULT_DELAY:100}
     # Endpoint-specific delays (in milliseconds)
-    # Keys use quotes to preserve special characters
+    # Individual properties to work around Spring Boot property mapping limitations
     delays:
-      '/clients/srvgetclientlist': 150
-      '/tasks/getByFilter': 200
-      '/cti/getCommunications': 50
-      '/clientcard/positions/get': 300
-      # Add more endpoint-specific delays as needed
+      "/clients/srvgetclientlist": 150
+      "/tasks/getByFilter": 200
+      "/cti/getCommunications": 50
+      "/clientcard/positions/get": 300
     clients:
       enabled: ${ARMSB_CLIENTS_ENABLED:true}
     tasks:
