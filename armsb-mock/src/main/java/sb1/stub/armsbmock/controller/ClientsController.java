@@ -31,7 +31,7 @@ public class ClientsController {
     @ApiResponse(responseCode = "200", description = "Successful response", 
                 content = @Content(examples = @ExampleObject(value = "{\"status\":\"success\"}")))
     @RequestMapping(value = "/clients/srvgetclientlist", method = RequestMethod.POST, produces = "application/json")
-    public String getClientsList(@RequestBody String requestBody) {
+    public String getClientsList(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("ClientsController.getClientsList called with request length: {}", requestBody.length());
         log.debug("Request body: {}", requestBody);
         
@@ -65,18 +65,18 @@ public class ClientsController {
             log.debug("Default response: all clients");
         }
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         log.info("ClientsController.getClientsList completed");
         return response;
     }
 
     @Operation(summary = "Get clients for mass mailing")
     @RequestMapping(value = "armsb/clients/v1/rest/getClientsForMassMailing", method = RequestMethod.POST, produces = "application/json")
-    public String getClientsForMassMailing(@RequestBody String requestBody) {
+    public String getClientsForMassMailing(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("ClientsController.getClientsForMassMailing called");
         log.debug("Request body: {}", requestBody);
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         String response = ClientsJsonData.getMailingInfoPageByFilters();
         log.info("ClientsController.getClientsForMassMailing completed");
         return response;
@@ -84,11 +84,11 @@ public class ClientsController {
 
     @Operation(summary = "Get tasks by filter")
     @RequestMapping(value = "/tasks/get", method = RequestMethod.POST, produces = "application/json")
-    public String getTasksByFilter(@RequestBody String requestBody) {
+    public String getTasksByFilter(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("ClientsController.getTasksByFilter called");
         log.debug("Request body: {}", requestBody);
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         String response = ClientsJsonData.tasksGetByFilter();
         log.info("ClientsController.getTasksByFilter completed");
         return response;
@@ -96,11 +96,11 @@ public class ClientsController {
 
     @Operation(summary = "Search clients by last name")
     @RequestMapping(value = "/clients/srvgetclientlist/clients/searchByLastName", method = RequestMethod.POST, produces = "application/json")
-    public String searchByLastName(@RequestBody String requestBody) {
+    public String searchByLastName(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("ClientsController.searchByLastName called");
         log.debug("Request body: {}", requestBody);
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         String response = ClientsJsonData.getVipClientsByFullName();
         log.info("ClientsController.searchByLastName completed");
         return response;
@@ -108,7 +108,7 @@ public class ClientsController {
 
     @Operation(summary = "PPRB BHEP Service")
     @RequestMapping(value = "/clients/pprbBhepService", method = RequestMethod.POST, produces = "application/json")
-    public String pprbBhepService(@RequestBody String requestBody) {
+    public String pprbBhepService(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("ClientsController.pprbBhepService called");
         log.debug("Request body: {}", requestBody);
         
@@ -124,7 +124,7 @@ public class ClientsController {
             log.debug("Default PPRB BHEP response");
         }
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         log.info("ClientsController.pprbBhepService completed");
         return response;
     }
@@ -136,7 +136,7 @@ public class ClientsController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientsJsonData.pprbClients();
             log.info("ClientsController.getByTeamId completed");
             return responseData;
@@ -153,7 +153,7 @@ public class ClientsController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientsJsonData.getTeams();
             log.info("ClientsController.getTeams completed");
             return responseData;
@@ -170,7 +170,7 @@ public class ClientsController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientsJsonData.ucpClients();
             log.info("ClientsController.getUcpClients completed");
             return responseData;
@@ -187,7 +187,7 @@ public class ClientsController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = ClientsJsonData.forSend();
             log.info("ClientsController.forSend completed");
             return responseData;
@@ -199,7 +199,7 @@ public class ClientsController {
 
     @Operation(summary = "PPRB Clients general endpoint")
     @RequestMapping(value = "/clients/pprbClients", method = RequestMethod.POST, produces = "application/json")
-    public String pprbClients(@RequestBody String requestBody) {
+    public String pprbClients(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("ClientsController.pprbClients called");
         log.debug("Request body: {}", requestBody);
         
@@ -221,14 +221,14 @@ public class ClientsController {
             log.debug("Default PPRB clients response");
         }
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         log.info("ClientsController.pprbClients completed");
         return response;
     }
 
     @Operation(summary = "UCP Clients endpoint")
     @RequestMapping(value = "/clients/ucpclients", method = RequestMethod.POST, produces = "application/json")
-    public String ucpClients(@RequestBody String requestBody) {
+    public String ucpClients(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("ClientsController.ucpClients called");
         log.debug("Request body: {}", requestBody);
         
@@ -244,16 +244,16 @@ public class ClientsController {
             log.debug("Default UCP clients response");
         }
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         log.info("ClientsController.ucpClients completed");
         return response;
     }
 
     @Operation(summary = "Get employee information")
     @RequestMapping(value = "/sbpemployeeinfo/v1/employee", method = RequestMethod.GET, produces = "application/json")
-    public String getEmployee() {
+    public String getEmployee(HttpServletRequest request) {
         log.info("ClientsController.getEmployee called");
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         String response = ClientsJsonData.employee();
         log.info("ClientsController.getEmployee completed");
         return response;

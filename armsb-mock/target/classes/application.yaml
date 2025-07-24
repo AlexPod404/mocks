@@ -39,6 +39,10 @@ springdoc:
 armsb:
   mock:
     default-delay: ${ARMSB_DEFAULT_DELAY:100}
+    delays:
+      # Per-endpoint delay configuration in milliseconds
+      # Example: "/clients/srvgetclientlist": 200
+      # Example: "/tasks/getByFilter": 150
     clients:
       enabled: ${ARMSB_CLIENTS_ENABLED:true}
     tasks:
