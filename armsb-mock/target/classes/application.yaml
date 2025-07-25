@@ -34,6 +34,7 @@ armsb:
     default-delay: ${ARMSB_DEFAULT_DELAY:100}
     delays:
       /clients/srvgetclientlist: 250
+      /cti/getCommunications: 400
     clients:
       enabled: ${ARMSB_CLIENTS_ENABLED:true}
     tasks:
