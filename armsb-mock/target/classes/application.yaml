@@ -39,13 +39,15 @@ springdoc:
 armsb:
   mock:
     default-delay: ${ARMSB_DEFAULT_DELAY:100}
-    delays: {}
+    delays:
       # Per-endpoint delay configuration in milliseconds
-      # To add delays, uncomment and configure like:
-      # "/clients/srvgetclientlist": 200
-      # "/tasks/getByFilter": 150
-      # "/cti/getCommunications": 300
-      # "/sbpemployeeinfo/v1/employee": 50
+      '/clients/srvgetclientlist': 200
+      '/tasks/getByFilter': 150
+      '/cti/getCommunications': 300
+      '/sbpemployeeinfo/v1/employee': 50
+      '/clients/srvgetclientlist/clients/searchByLastName': 180
+      '/tasks/getTaskById': 120
+      '/cti/getClientPhones': 250
     clients:
       enabled: ${ARMSB_CLIENTS_ENABLED:true}
     tasks:

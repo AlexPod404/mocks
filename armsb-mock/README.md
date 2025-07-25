@@ -97,9 +97,43 @@ Spring Boot Actuator provides monitoring endpoints at `/actuator`:
 
 ## Delay Configuration
 
-Configure response delays both globally and per-endpoint:
+Configure response delays both globally and per-endpoint using multiple APIs:
 
-### Global Delay Configuration
+### New Delay Management API
+
+The preferred way to manage delays is through the new `/delays` endpoints:
+
+```bash
+# Get all configured delays
+curl http://localhost:8080/delays
+
+# Get delay for a specific endpoint (use query parameter)
+curl "http://localhost:8080/delays/endpoint?endpoint=/clients/srvgetclientlist"
+
+# Set delay for a specific endpoint
+curl -X POST "http://localhost:8080/delays/set?endpoint=/clients/srvgetclientlist&delay=500"
+
+# Set delay for another endpoint
+curl -X POST "http://localhost:8080/delays/set?endpoint=/tasks/getByFilter&delay=300"
+
+# Example response for getting all delays:
+# {
+#   "clientssrvgetclientlist": 200,
+#   "tasksgetByFilter": 150,
+#   "ctigetCommunications": 300,
+#   "sbpemployeeinfov1employee": 50
+# }
+
+# Example response for setting a delay:
+# {
+#   "endpoint": "/clients/srvgetclientlist",
+#   "delay": 500,
+#   "status": "success",
+#   "message": "Delay for endpoint '/clients/srvgetclientlist' set to 500 ms"
+# }
+```
+
+### Legacy Global Delay Configuration
 
 ```bash
 # Get current global delay
@@ -119,13 +153,17 @@ armsb:
   mock:
     default-delay: 100  # Default delay in milliseconds
     delays:
-      # Per-endpoint delay configuration
+      # Per-endpoint delay configuration in milliseconds
       "/clients/srvgetclientlist": 200
       "/tasks/getByFilter": 150
       "/cti/getCommunications": 300
+      "/sbpemployeeinfo/v1/employee": 50
+      "/clients/srvgetclientlist/clients/searchByLastName": 180
+      "/tasks/getTaskById": 120
+      "/cti/getClientPhones": 250
 ```
 
-#### Dynamic API Configuration
+#### Legacy Dynamic API Configuration
 ```bash
 # Set delay for specific endpoint
 curl -X POST "http://localhost:8080/setDeltaForEndpoint?endpoint=/clients/srvgetclientlist&delay=250"
@@ -143,12 +181,42 @@ curl http://localhost:8080/getAllDelays
 #### Delay Priority
 
 Delays are applied in the following priority order:
-1. **Runtime configured delays** (set via `setDeltaForEndpoint` API)
+1. **Runtime configured delays** (set via `setDeltaForEndpoint` API or `/delays/set`)
 2. **Configuration file delays** (from `application.yaml`)
 3. **Global delay** (if no endpoint-specific delay is configured)
 4. **Default delay** (fallback value: 100ms)
 
 This allows for flexible delay management where runtime changes take precedence over static configuration.
+
+### Testing Delays
+
+You can verify that delays are working by timing requests:
+
+```bash
+# Set a specific delay
+curl -X POST "http://localhost:8080/delays/set?endpoint=/clients/srvgetclientlist&delay=1000"
+
+# Test the delay (should take ~1 second)
+time curl -X POST http://localhost:8080/clients/srvgetclientlist \
+  -H "Content-Type: application/json" \
+  -d '{"test": "request"}'
+
+# Check the delay was applied from application startup logs:
+# "Using runtime delay for endpoint '/clients/srvgetclientlist': 1000 ms"
+# "Applying delay for endpoint '/clients/srvgetclientlist': 1000 ms"
+```
+
+### Example Endpoints with Delays
+
+The following endpoints are available and can have individual delays configured:
+
+- `/clients/srvgetclientlist` - Main clients operations
+- `/tasks/getByFilter` - Get tasks by filter
+- `/cti/getCommunications` - Get communications history
+- `/sbpemployeeinfo/v1/employee` - Employee information
+- `/clients/srvgetclientlist/clients/searchByLastName` - Search by last name
+- `/tasks/getTaskById` - Get task by ID
+- `/cti/getClientPhones` - Get client phone numbers
 
 ## Endpoints Overview
 

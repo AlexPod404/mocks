@@ -2,9 +2,15 @@ package sb1.stub.armsbmock.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sb1.stub.armsbmock.config.ArmsbMockConfig;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,6 +23,19 @@ public class DelayService {
     
     @Autowired
     private ArmsbMockConfig config;
+    
+    @Value("${spring.config.name:application}")
+    private String configName;
+    
+    @PostConstruct
+    public void init() {
+        // Load delays from configuration into memory
+        Map<String, Long> configuredDelays = config.getDelays();
+        if (configuredDelays != null && !configuredDelays.isEmpty()) {
+            endpointDelays.putAll(configuredDelays);
+            log.info("Loaded {} delay configurations from application.yaml", configuredDelays.size());
+        }
+    }
     
     public void applyDelay() {
         try {
@@ -73,6 +92,17 @@ public class DelayService {
     public void setDelayForEndpoint(String endpoint, long delay) {
         log.info("Setting delay for endpoint '{}' to: {} ms", endpoint, delay);
         endpointDelays.put(endpoint, delay);
+        // Optionally sync to config (in a real implementation, this would update the YAML file)
+        // For now, we just store in memory and log
+        log.debug("Delay stored in memory. To persist, update application.yaml manually.");
+    }
+
+    public void syncDelaysToConfig() {
+        // This method could be used to write delays back to application.yaml
+        // For this implementation, we'll provide the capability but not implement file writing
+        // as it's complex and may interfere with application startup
+        log.info("Sync to config requested. Current delays in memory: {}", endpointDelays.size());
+        log.debug("Memory delays: {}", endpointDelays);
     }
     
     public Long getDelayForEndpoint(String endpoint, boolean includeDefaults) {
