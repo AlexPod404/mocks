@@ -8,6 +8,8 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.DumperOptions;
 import sb1.stub.armsbmock.config.ArmsbMockConfig;
 
+import javax.annotation.PostConstruct;
+
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,6 +31,73 @@ public class DelayService {
     private String configName;
     
     private final String configFile = "src/main/resources/application.yaml";
+    
+    @PostConstruct
+    public void initializeEndpointDelays() {
+        log.info("Initializing endpoint delays with 300ms for all ARMSB-mock endpoints");
+        
+        // ClientCard endpoints
+        setDelayForEndpoint("/clientcard/sbpemployeeinfo/v1/employee", 300L);
+        setDelayForEndpoint("/clientcard/positions/get", 300L);
+        setDelayForEndpoint("/clients/getClientCardFromCRMandEPK/rest/v1/context", 300L);
+        setDelayForEndpoint("/clientcard/employee/com.sbt.bpspe.core.json.rpc.api.Employee", 300L);
+        setDelayForEndpoint("/send", 300L);
+        setDelayForEndpoint("/getCompanies", 300L);
+        setDelayForEndpoint("/getInfoByCompanyId", 300L);
+        setDelayForEndpoint("/clientcard/teams/get", 300L);
+        setDelayForEndpoint("/clients/getClientCardFromCRMandEPK", 300L);
+        setDelayForEndpoint("/services/create-structure", 300L);
+        setDelayForEndpoint("/sbolpro/netscanbh/v1/file/setRegionConfig", 300L);
+        
+        // Clients endpoints
+        setDelayForEndpoint("/clients/srvgetclientlist", 300L);
+        setDelayForEndpoint("/armsb/clients/v1/rest/getClientsForMassMailing", 300L);
+        setDelayForEndpoint("/clients/srvgetclientlist/clients/searchByLastName", 300L);
+        setDelayForEndpoint("/clients/pprbBhepService", 300L);
+        setDelayForEndpoint("/clients/pprbClients/clients/getByTeamId", 300L);
+        setDelayForEndpoint("/clients/teams/get", 300L);
+        setDelayForEndpoint("/clients/ucpclients/clients/get", 300L);
+        setDelayForEndpoint("/employee/com.sbt.bpspe.core.json.rpc.api.Employee", 300L);
+        setDelayForEndpoint("/clients/pprbClients", 300L);
+        setDelayForEndpoint("/clients/ucpclients", 300L);
+        setDelayForEndpoint("/sbpemployeeinfo/v1/employee", 300L);
+        
+        // CTI endpoints
+        setDelayForEndpoint("/cti/getCommunications", 300L);
+        setDelayForEndpoint("/cti/getClientPhones", 300L);
+        setDelayForEndpoint("/cti/call/init", 300L);
+        setDelayForEndpoint("/cti/sbpemployeeinfo/v1/employee", 300L);
+        setDelayForEndpoint("/cti/positions/get", 300L);
+        setDelayForEndpoint("/cti/setNotification", 300L);
+        setDelayForEndpoint("/pprbNotification", 300L);
+        
+        // Tasks endpoints
+        setDelayForEndpoint("/tasks/sbpemployeeinfo/v1/employee", 300L);
+        setDelayForEndpoint("/tasks/clients/getByTeamId", 300L);
+        setDelayForEndpoint("/tasks/clients/get", 300L);
+        setDelayForEndpoint("/templates/get", 300L);
+        setDelayForEndpoint("/templates/getFilters", 300L);
+        setDelayForEndpoint("/templates/update", 300L);
+        setDelayForEndpoint("/tasks/getByFilter", 300L);
+        setDelayForEndpoint("/tasks/get", 300L);
+        setDelayForEndpoint("/tasks/getTaskById", 300L);
+        setDelayForEndpoint("/tasks/offers", 300L);
+        setDelayForEndpoint("/tasks/getFilters", 300L);
+        setDelayForEndpoint("/tasks/marking/getById", 300L);
+        setDelayForEndpoint("/tasks/data-dictionary-service/rest/pm/ver.4.0/getRows", 300L);
+        setDelayForEndpoint("/values/get", 300L);
+        setDelayForEndpoint("/values/update", 300L);
+        setDelayForEndpoint("/getGeneralCounters", 300L);
+        setDelayForEndpoint("/getCountersByClients", 300L);
+        setDelayForEndpoint("/tasks/positions/get", 300L);
+        setDelayForEndpoint("/tasks", 300L);
+        setDelayForEndpoint("/tasks/teams/get", 300L);
+        setDelayForEndpoint("/tasks/marking/check", 300L);
+        setDelayForEndpoint("/tasks/teams/free", 300L);
+        setDelayForEndpoint("/tasks/marking/getByClient", 300L);
+        
+        log.info("Endpoint delay initialization completed. {} endpoints configured with 300ms delay", endpointDelays.size());
+    }
     
     public void applyDelay() {
         try {

@@ -33,8 +33,58 @@ armsb:
   mock:
     default-delay: ${ARMSB_DEFAULT_DELAY:100}
     delays:
-      /clients/srvgetclientlist: 250
-      /cti/getCommunications: 400
+      /clients/srvgetclientlist: 300
+      /cti/getCommunications: 300
+      /clientcard/sbpemployeeinfo/v1/employee: 300
+      /clientcard/positions/get: 300
+      /clients/getClientCardFromCRMandEPK/rest/v1/context: 300
+      /clientcard/employee/com.sbt.bpspe.core.json.rpc.api.Employee: 300
+      /send: 300
+      /getCompanies: 300
+      /getInfoByCompanyId: 300
+      /clientcard/teams/get: 300
+      /clients/getClientCardFromCRMandEPK: 300
+      /services/create-structure: 300
+      /sbolpro/netscanbh/v1/file/setRegionConfig: 300
+      /armsb/clients/v1/rest/getClientsForMassMailing: 300
+      /clients/srvgetclientlist/clients/searchByLastName: 300
+      /clients/pprbBhepService: 300
+      /clients/pprbClients/clients/getByTeamId: 300
+      /clients/teams/get: 300
+      /clients/ucpclients/clients/get: 300
+      /employee/com.sbt.bpspe.core.json.rpc.api.Employee: 300
+      /clients/pprbClients: 300
+      /clients/ucpclients: 300
+      /sbpemployeeinfo/v1/employee: 300
+      /cti/getClientPhones: 300
+      /cti/call/init: 300
+      /cti/sbpemployeeinfo/v1/employee: 300
+      /cti/positions/get: 300
+      /cti/setNotification: 300
+      /pprbNotification: 300
+      /tasks/sbpemployeeinfo/v1/employee: 300
+      /tasks/clients/getByTeamId: 300
+      /tasks/clients/get: 300
+      /templates/get: 300
+      /templates/getFilters: 300
+      /templates/update: 300
+      /tasks/getByFilter: 300
+      /tasks/get: 300
+      /tasks/getTaskById: 300
+      /tasks/offers: 300
+      /tasks/getFilters: 300
+      /tasks/marking/getById: 300
+      /tasks/data-dictionary-service/rest/pm/ver.4.0/getRows: 300
+      /values/get: 300
+      /values/update: 300
+      /getGeneralCounters: 300
+      /getCountersByClients: 300
+      /tasks/positions/get: 300
+      /tasks: 300
+      /tasks/teams/get: 300
+      /tasks/marking/check: 300
+      /tasks/teams/free: 300
+      /tasks/marking/getByClient: 300
     clients:
       enabled: ${ARMSB_CLIENTS_ENABLED:true}
     tasks:
