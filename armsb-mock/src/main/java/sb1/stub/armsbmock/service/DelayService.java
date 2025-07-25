@@ -8,10 +8,13 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.DumperOptions;
 import sb1.stub.armsbmock.config.ArmsbMockConfig;
 
+import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,6 +32,59 @@ public class DelayService {
     private String configName;
     
     private final String configFile = "src/main/resources/application.yaml";
+    
+    /**
+     * List of all armsb-mock endpoints that should have default delays configured
+     */
+    private static final List<String> ARMSB_ENDPOINTS = Arrays.asList(
+        "/cti/getCommunications",
+        "/cti/getClientPhones", 
+        "/cti/call/init",
+        "/employees/{fullEmployeeNumber}/phones",
+        "/cti/sbpemployeeinfo/v1/employee",
+        "/clientcard/sbpemployeeinfo/v1/employee",
+        "/clientcard/positions/get",
+        "/clients/getClientCardFromCRMandEPK/rest/v1/context",
+        "/clientcard/employee/com.sbt.bpspe.core.json.rpc.api.Employee",
+        "/clients/srvgetclientlist",
+        "/clients/pprbBhepService",
+        "/clients/teams/get", 
+        "/clients/pprbClients",
+        "/tasks/getByFilter",
+        "/tasks/getTaskById",
+        "/tasks/offers",
+        "/tasks/marking/getById",
+        "/tasks/sbpemployeeinfo/v1/employee",
+        "/templates/get",
+        "/templates/getFilters",
+        "/templates/update",
+        "/setDelta/{delta}",
+        "/getDelta",
+        "/setDeltaForEndpoint",
+        "/getDelayForEndpoint",
+        "/removeDelayForEndpoint"
+    );
+    
+    /**
+     * Initialize default delays for all armsb-mock endpoints
+     * This method runs after dependency injection is complete
+     */
+    @PostConstruct
+    public void initializeEndpointDelays() {
+        log.info("Initializing default delays for all armsb-mock endpoints");
+        
+        for (String endpoint : ARMSB_ENDPOINTS) {
+            // Only initialize if endpoint doesn't already have a configured delay
+            if (!config.getDelays().containsKey(endpoint) && !endpointDelays.containsKey(endpoint)) {
+                endpointDelays.put(endpoint, config.getDefaultDelay());
+                log.debug("Initialized default delay for endpoint '{}': {} ms", endpoint, config.getDefaultDelay());
+            } else {
+                log.debug("Endpoint '{}' already has configured delay, skipping initialization", endpoint);
+            }
+        }
+        
+        log.info("Completed initialization of default delays for {} endpoints", ARMSB_ENDPOINTS.size());
+    }
     
     public void applyDelay() {
         try {
