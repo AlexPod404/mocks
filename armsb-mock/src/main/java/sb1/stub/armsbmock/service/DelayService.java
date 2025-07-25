@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sb1.stub.armsbmock.config.ArmsbMockConfig;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,6 +18,48 @@ public class DelayService {
     
     @Autowired
     private ArmsbMockConfig config;
+    
+    @PostConstruct
+    public void initializeEndpointDelays() {
+        log.info("Initializing individual delays for all armsb-mock endpoints");
+        long defaultEndpointDelay = 300L; // 300ms as specified in requirements
+        
+        // Initialize delays for all required endpoints
+        String[] endpoints = {
+            "/cti/getCommunications",
+            "/cti/getClientPhones",
+            "/cti/call/init",
+            "/employees/{fullEmployeeNumber}/phones",
+            "/cti/sbpemployeeinfo/v1/employee",
+            "/clientcard/sbpemployeeinfo/v1/employee",
+            "/clientcard/positions/get",
+            "/clients/getClientCardFromCRMandEPK/rest/v1/context",
+            "/clientcard/employee/com.sbt.bpspe.core.json.rpc.api.Employee",
+            "/clients/srvgetclientlist",
+            "/clients/pprbBhepService",
+            "/clients/teams/get",
+            "/clients/pprbClients",
+            "/tasks/getByFilter",
+            "/tasks/getTaskById",
+            "/tasks/offers",
+            "/tasks/marking/getById",
+            "/tasks/sbpemployeeinfo/v1/employee",
+            "/templates/get",
+            "/templates/getFilters",
+            "/templates/update",
+            "/setDelta/{delta}",
+            "/getDelta",
+            "/setDeltaForEndpoint",
+            "/getDelayForEndpoint",
+            "/removeDelayForEndpoint"
+        };
+        
+        for (String endpoint : endpoints) {
+            setDelayForEndpoint(endpoint, defaultEndpointDelay);
+        }
+        
+        log.info("Successfully initialized {} endpoint delays with {}ms", endpoints.length, defaultEndpointDelay);
+    }
     
     public void applyDelay() {
         try {
