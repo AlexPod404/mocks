@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sb1.stub.armsbmock.config.ArmsbMockConfig;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -97,5 +98,40 @@ public class DelayService {
     public void removeDelayForEndpoint(String endpoint) {
         log.info("Removing delay configuration for endpoint: {}", endpoint);
         endpointDelays.remove(endpoint);
+    }
+    
+    @PostConstruct
+    public void initializeEndpointDelays() {
+        log.info("Initializing individual delays for armsb-mock endpoints");
+        
+        // Set 300ms delay for all armsb-mock endpoints
+        setDelayForEndpoint("/cti/getCommunications", 300L);
+        setDelayForEndpoint("/cti/getClientPhones", 300L);
+        setDelayForEndpoint("/cti/call/init", 300L);
+        setDelayForEndpoint("/employees/{fullEmployeeNumber}/phones", 300L);
+        setDelayForEndpoint("/cti/sbpemployeeinfo/v1/employee", 300L);
+        setDelayForEndpoint("/clientcard/sbpemployeeinfo/v1/employee", 300L);
+        setDelayForEndpoint("/clientcard/positions/get", 300L);
+        setDelayForEndpoint("/clients/getClientCardFromCRMandEPK/rest/v1/context", 300L);
+        setDelayForEndpoint("/clientcard/employee/com.sbt.bpspe.core.json.rpc.api.Employee", 300L);
+        setDelayForEndpoint("/clients/srvgetclientlist", 300L);
+        setDelayForEndpoint("/clients/pprbBhepService", 300L);
+        setDelayForEndpoint("/clients/teams/get", 300L);
+        setDelayForEndpoint("/clients/pprbClients", 300L);
+        setDelayForEndpoint("/tasks/getByFilter", 300L);
+        setDelayForEndpoint("/tasks/getTaskById", 300L);
+        setDelayForEndpoint("/tasks/offers", 300L);
+        setDelayForEndpoint("/tasks/marking/getById", 300L);
+        setDelayForEndpoint("/tasks/sbpemployeeinfo/v1/employee", 300L);
+        setDelayForEndpoint("/templates/get", 300L);
+        setDelayForEndpoint("/templates/getFilters", 300L);
+        setDelayForEndpoint("/templates/update", 300L);
+        setDelayForEndpoint("/setDelta/{delta}", 300L);
+        setDelayForEndpoint("/getDelta", 300L);
+        setDelayForEndpoint("/setDeltaForEndpoint", 300L);
+        setDelayForEndpoint("/getDelayForEndpoint", 300L);
+        setDelayForEndpoint("/removeDelayForEndpoint", 300L);
+        
+        log.info("Successfully initialized delays for {} armsb-mock endpoints", 25);
     }
 }
