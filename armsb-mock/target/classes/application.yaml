@@ -31,9 +31,11 @@ springdoc:
     path: /v3/api-docs
 armsb:
   mock:
-    default-delay: ${ARMSB_DEFAULT_DELAY:100}
+    default-delay: ${ARMSB_DEFAULT_DELAY:300}
     delays:
       /clients/srvgetclientlist: 250
+      /cti/getCommunications: 400
+      /test/endpoint: 500
     clients:
       enabled: ${ARMSB_CLIENTS_ENABLED:true}
     tasks:

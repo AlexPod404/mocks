@@ -44,7 +44,7 @@ server:
 
 armsb:
   mock:
-    default-delay: 100  # Default delay in milliseconds
+    default-delay: 300  # Default delay in milliseconds
     delays:
       # Per-endpoint delay configuration
       "/clients/srvgetclientlist": 200
@@ -68,7 +68,7 @@ logging:
 ### Environment Variables
 
 - `SERVER_PORT` - Server port (default: 8080)
-- `ARMSB_DEFAULT_DELAY` - Default response delay in ms (default: 100)
+- `ARMSB_DEFAULT_DELAY` - Default response delay in ms (default: 300)
 - `LOG_LEVEL_ROOT` - Root logging level (default: INFO)
 - `LOG_LEVEL_ARMSB` - ARMSB components logging level (default: DEBUG)
 - `ARMSB_CLIENTS_ENABLED` - Enable/disable Clients controller (default: true)
@@ -113,7 +113,7 @@ Configure default delays and specific endpoint delays in the configuration file:
 ```yaml
 armsb:
   mock:
-    default-delay: 100  # Default delay in milliseconds
+    default-delay: 300  # Default delay in milliseconds
     delays:
       # Per-endpoint delay configuration
       "/clients/srvgetclientlist": 200
@@ -217,11 +217,14 @@ curl "http://localhost:8080/getAllDelays"
 
 ### Delay Priority and Behavior
 
+The DelayService automatically initializes default delays for all armsb-mock endpoints during application startup using a @PostConstruct method. This ensures that every endpoint has a configured delay even if not explicitly set in the configuration file.
+
 Delays are applied in the following priority order:
 1. **Runtime configured delays** (set via DelayController API)
 2. **Configuration file delays** (from `application.yaml`)
-3. **Global delay** (if no endpoint-specific delay is configured)
-4. **Default delay** (fallback value: 100ms)
+3. **Initialized default delays** (set during startup via @PostConstruct)
+4. **Global delay** (if no endpoint-specific delay is configured)
+5. **Default delay** (fallback value: 300ms)
 
 ### Automatic Persistence
 
