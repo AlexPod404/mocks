@@ -8,6 +8,7 @@
 /home/runner/work/mocks/mocks/armsb-mock/src/main/java/sb1/stub/armsbmock/data/TasksJsonData.java
 /home/runner/work/mocks/mocks/armsb-mock/src/main/java/sb1/stub/armsbmock/data/CtiJsonData.java
 /home/runner/work/mocks/mocks/armsb-mock/src/main/java/sb1/stub/armsbmock/controller/ClientCardController.java
+/home/runner/work/mocks/mocks/armsb-mock/src/main/java/sb1/stub/armsbmock/controller/DelayController.java
 /home/runner/work/mocks/mocks/armsb-mock/src/main/java/sb1/stub/armsbmock/ArmsbMockApplication.java
 /home/runner/work/mocks/mocks/armsb-mock/src/main/java/sb1/stub/armsbmock/controller/ConfigurationController.java
 /home/runner/work/mocks/mocks/armsb-mock/src/main/java/sb1/stub/armsbmock/data/JsonResponses.java
