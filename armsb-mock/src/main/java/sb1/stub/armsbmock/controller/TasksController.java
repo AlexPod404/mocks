@@ -28,9 +28,9 @@ public class TasksController {
 
     @Operation(summary = "Get employee information for tasks")
     @RequestMapping(value = "/tasks/sbpemployeeinfo/v1/employee", method = RequestMethod.GET, produces = "application/json")
-    public String getEmployee() {
+    public String getEmployee(HttpServletRequest request) {
         log.info("TasksController.getEmployee called");
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         String response = TasksJsonData.employee();
         log.info("TasksController.getEmployee completed");
         return response;
@@ -43,7 +43,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getByTeamId();
             log.info("TasksController.getByTeamId completed");
             return responseData;
@@ -60,7 +60,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getByClientId();
             log.info("TasksController.getByClientId completed");
             return responseData;
@@ -77,7 +77,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getTemplates();
             log.info("TasksController.getTemplates completed");
             return responseData;
@@ -94,7 +94,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getFiltersTemplates();
             log.info("TasksController.getFiltersTemplates completed");
             return responseData;
@@ -111,7 +111,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getUpdateTemplates();
             log.info("TasksController.getUpdateTemplates completed");
             return responseData;
@@ -128,7 +128,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.tasksByFilter(result);
             log.info("TasksController.tasksGetByFilter completed");
             return responseData;
@@ -138,6 +138,18 @@ public class TasksController {
         }
     }
 
+    @Operation(summary = "Get tasks by filter (simple)")
+    @RequestMapping(value = "/tasks/get", method = RequestMethod.POST, produces = "application/json")
+    public String getTasksByFilter(@RequestBody String requestBody, HttpServletRequest request) {
+        log.info("TasksController.getTasksByFilter called");
+        log.debug("Request body: {}", requestBody);
+        
+        delayService.applyDelay(request.getRequestURI());
+        String response = TasksJsonData.tasksGetByFilter();
+        log.info("TasksController.getTasksByFilter completed");
+        return response;
+    }
+
     @Operation(summary = "Get task by ID")
     @RequestMapping(value = "/tasks/getTaskById", method = RequestMethod.POST, produces = "application/json")
     public String getTask(HttpServletRequest request, HttpServletResponse response) {
@@ -145,7 +157,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getTask(result);
             log.info("TasksController.getTask completed");
             return responseData;
@@ -162,7 +174,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getOffer();
             log.info("TasksController.getOffer completed");
             return responseData;
@@ -179,7 +191,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getFilters();
             log.info("TasksController.getFilters completed");
             return responseData;
@@ -196,7 +208,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getMarkingById();
             log.info("TasksController.getMarkingById completed");
             return responseData;
@@ -213,7 +225,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.premierDivisions();
             log.info("TasksController.premierDivisions completed");
             return responseData;
@@ -230,7 +242,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.resultDetailGet();
             log.info("TasksController.resultDetailGet completed");
             return responseData;
@@ -247,7 +259,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.resultDetailUpdate();
             log.info("TasksController.resultDetailUpdate completed");
             return responseData;
@@ -264,7 +276,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getGeneralCounters();
             log.info("TasksController.getGeneralCounters completed");
             return responseData;
@@ -281,7 +293,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getCountersByClients();
             log.info("TasksController.getCountersByClients completed");
             return responseData;
@@ -298,7 +310,7 @@ public class TasksController {
         try {
             String result = IOUtils.toString(request.getInputStream());
             log.debug("Request body: {}", result);
-            delayService.applyDelay();
+            delayService.applyDelay(request.getRequestURI());
             String responseData = TasksJsonData.getPositions();
             log.info("TasksController.getPositions completed");
             return responseData;
@@ -310,7 +322,7 @@ public class TasksController {
 
     @Operation(summary = "Tasks main endpoint", description = "Main tasks endpoint handling various task operations")
     @RequestMapping(value = "/tasks", method = RequestMethod.POST, produces = "application/json")
-    public String tasksMain(@RequestBody String requestBody) {
+    public String tasksMain(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("TasksController.tasksMain called with request length: {}", requestBody.length());
         log.debug("Request body: {}", requestBody);
         
@@ -341,14 +353,14 @@ public class TasksController {
             log.debug("Default response: search");
         }
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         log.info("TasksController.tasksMain completed");
         return response;
     }
 
     @Operation(summary = "Get teams for tasks")
     @RequestMapping(value = "/tasks/teams/get", method = RequestMethod.POST, produces = "application/json")
-    public String getTeams(@RequestBody String requestBody) {
+    public String getTeams(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("TasksController.getTeams called");
         log.debug("Request body: {}", requestBody);
         
@@ -374,14 +386,14 @@ public class TasksController {
             log.debug("Default teams response");
         }
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         log.info("TasksController.getTeams completed");
         return response;
     }
 
     @Operation(summary = "Check marking")
     @RequestMapping(value = "/tasks/marking/check", method = RequestMethod.POST, produces = "application/json")
-    public String checkMarking(@RequestBody String requestBody) {
+    public String checkMarking(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("TasksController.checkMarking called");
         log.debug("Request body: {}", requestBody);
         
@@ -397,18 +409,18 @@ public class TasksController {
             log.debug("Default marking check response");
         }
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         log.info("TasksController.checkMarking completed");
         return response;
     }
 
     @Operation(summary = "Get free teams")
     @RequestMapping(value = "/tasks/teams/free", method = RequestMethod.POST, produces = "application/json")
-    public String getFreeTeams(@RequestBody String requestBody) {
+    public String getFreeTeams(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("TasksController.getFreeTeams called");
         log.debug("Request body: {}", requestBody);
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         String response = TasksJsonData.getFreeTeams();
         log.info("TasksController.getFreeTeams completed");
         return response;
@@ -416,7 +428,7 @@ public class TasksController {
 
     @Operation(summary = "Get marking by client")
     @RequestMapping(value = "/tasks/marking/getByClient", method = RequestMethod.POST, produces = "application/json")
-    public String getMarkingByClient(@RequestBody String requestBody) {
+    public String getMarkingByClient(@RequestBody String requestBody, HttpServletRequest request) {
         log.info("TasksController.getMarkingByClient called");
         log.debug("Request body: {}", requestBody);
         
@@ -432,7 +444,7 @@ public class TasksController {
             log.debug("Default marking by client response");
         }
         
-        delayService.applyDelay();
+        delayService.applyDelay(request.getRequestURI());
         log.info("TasksController.getMarkingByClient completed");
         return response;
     }
