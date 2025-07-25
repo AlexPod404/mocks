@@ -36,33 +36,30 @@ java -jar target/armsb-mock-1.0.0.jar
 
 ### Configuration
 
-Configure the application using environment variables or `application.yaml`:
+Configure the application using environment variables or `application.properties`:
 
-```yaml
-server:
-  port: 8080
+```properties
+# Server configuration
+server.port=8080
 
-armsb:
-  mock:
-    default-delay: 300  # Default delay in milliseconds
-    delays:
-      # Per-endpoint delay configuration
-      "/clients/srvgetclientlist": 200
-      "/tasks/getByFilter": 150
-      "/cti/getCommunications": 300
-    clients:
-      enabled: true
-    tasks:
-      enabled: true
-    cti:
-      enabled: true
-    client-card:
-      enabled: true
+# ARMSB Mock Configuration
+armsb.mock.default-delay=300
 
-logging:
-  level:
-    root: INFO
-    sb1.stub.armsbmock: DEBUG
+# Module enablement
+armsb.mock.clients.enabled=true
+armsb.mock.tasks.enabled=true
+armsb.mock.cti.enabled=true
+armsb.mock.client-card.enabled=true
+
+# Individual endpoint delay configuration
+# All endpoints default to armsb.mock.default-delay value
+armsb.mock.delays./clients/srvgetclientlist=250
+armsb.mock.delays./cti/getCommunications=400
+armsb.mock.delays./tasks/getByFilter=150
+
+# Logging
+logging.level.root=INFO
+logging.level.sb1.stub.armsbmock=DEBUG
 ```
 
 ### Environment Variables
@@ -106,21 +103,44 @@ You can configure delays in three ways:
 2. **Dynamic API configuration** using the DelayController (recommended)
 3. **Legacy API configuration** using ConfigurationController
 
-### Static Configuration (application.yaml)
+### Static Configuration (application.properties)
 
 Configure default delays and specific endpoint delays in the configuration file:
 
-```yaml
-armsb:
-  mock:
-    default-delay: 300  # Default delay in milliseconds
-    delays:
-      # Per-endpoint delay configuration
-      "/clients/srvgetclientlist": 200
-      "/tasks/getByFilter": 150
-      "/cti/getCommunications": 300
-      "/sbpemployeeinfo/v1/employee": 50
+```properties
+# ARMSB Mock Configuration
+armsb.mock.default-delay=300
+
+# Individual endpoint delay configuration
+# All endpoints automatically default to armsb.mock.default-delay value
+armsb.mock.delays./clients/srvgetclientlist=250
+armsb.mock.delays./cti/getCommunications=400
+armsb.mock.delays./tasks/getByFilter=150
+armsb.mock.delays./templates/get=200
+
+# You can configure any endpoint by adding:
+# armsb.mock.delays.<endpoint-path>=<delay-in-milliseconds>
 ```
+
+#### Environment Variable Support
+
+You can also configure individual endpoint delays using environment variables:
+
+```bash
+# Set default delay
+export ARMSB_DEFAULT_DELAY=300
+
+# Set specific endpoint delays
+export ARMSB_DELAY_CLIENTS_SRVGET_CLIENT_LIST=250
+export ARMSB_DELAY_CTI_GET_COMMUNICATIONS=400
+export ARMSB_DELAY_TASKS_GET_BY_FILTER=150
+```
+
+All endpoint delays support environment variable overrides. The naming convention is:
+- `ARMSB_DELAY_` prefix
+- Endpoint path converted to uppercase
+- Special characters replaced with underscores
+- Example: `/clients/srvgetclientlist` → `ARMSB_DELAY_CLIENTS_SRVGET_CLIENT_LIST`
 
 ### Dynamic API Configuration (DelayController)
 
@@ -219,6 +239,16 @@ curl "http://localhost:8080/getAllDelays"
 
 The DelayService automatically initializes default delays for all armsb-mock endpoints during application startup using a @PostConstruct method. This ensures that every endpoint has a configured delay even if not explicitly set in the configuration file.
 
+**Complete Endpoint Coverage**: The system now automatically configures delays for all 50+ endpoints in the application, including:
+- CTI endpoints (communications, phone services, employee info)
+- Client endpoints (client lists, search, teams)
+- Client Card endpoints (positions, employee data)
+- Task endpoints (filters, offers, marking)
+- Template and values endpoints
+- General service endpoints
+
+All endpoints are initialized with the default delay value (300ms) unless explicitly configured.
+
 Delays are applied in the following priority order:
 1. **Runtime configured delays** (set via DelayController API)
 2. **Configuration file delays** (from `application.yaml`)
@@ -228,7 +258,7 @@ Delays are applied in the following priority order:
 
 ### Automatic Persistence
 
-All delay changes made through the API are automatically persisted to the `application.yaml` file, ensuring that configuration survives application restarts. The application uses SnakeYAML to maintain proper YAML formatting and structure.
+All delay changes made through the API are automatically persisted to the `application.properties` file, ensuring that configuration survives application restarts. The application uses standard Java Properties format to maintain proper formatting and structure.
 
 ### Example Workflow
 
