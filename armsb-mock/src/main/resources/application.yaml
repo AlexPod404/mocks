@@ -1,24 +1,21 @@
 server:
   port: ${SERVER_PORT:8080}
-
 spring:
   application:
     name: armsb-mock
-
 logging:
   level:
     root: ${LOG_LEVEL_ROOT:INFO}
     sb1.stub.armsbmock: ${LOG_LEVEL_ARMSB:DEBUG}
   pattern:
-    console: "${LOG_PATTERN_CONSOLE:%d{yyyy-MM-dd HH:mm:ss} - %msg%n}"
-    file: "${LOG_PATTERN_FILE:%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n}"
-
-# Actuator configuration
+    console: ${LOG_PATTERN_CONSOLE:%d{yyyy-MM-dd HH:mm:ss} - %msg%n}
+    file: ${LOG_PATTERN_FILE:%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36}
+      - %msg%n}
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: '*'
   endpoint:
     health:
       show-details: always
@@ -26,26 +23,18 @@ management:
     export:
       simple:
         enabled: true
-
-# Swagger configuration
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
     enabled: true
   api-docs:
     path: /v3/api-docs
-
-# ARMSB Mock configuration
 armsb:
   mock:
     default-delay: ${ARMSB_DEFAULT_DELAY:100}
-    delays: {}
-      # Per-endpoint delay configuration in milliseconds
-      # To add delays, uncomment and configure like:
-      # "/clients/srvgetclientlist": 200
-      # "/tasks/getByFilter": 150
-      # "/cti/getCommunications": 300
-      # "/sbpemployeeinfo/v1/employee": 50
+    delays:
+      /clients/srvgetclientlist: 250
+      /cti/getCommunications: 400
     clients:
       enabled: ${ARMSB_CLIENTS_ENABLED:true}
     tasks:
