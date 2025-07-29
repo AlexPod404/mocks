@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.DumperOptions;
 import sb1.stub.armsbmock.config.ArmsbMockConfig;
 
 import javax.annotation.PostConstruct;
@@ -13,9 +11,9 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -31,38 +29,87 @@ public class DelayService {
     @Value("${spring.config.name:application}")
     private String configName;
     
-    private final String configFile = "src/main/resources/application.yaml";
+    private final String configFile = "src/main/resources/application.properties";
     
     /**
      * List of all armsb-mock endpoints that should have default delays configured
+     * This list is automatically generated from all controllers and includes all available endpoints
      */
     private static final List<String> ARMSB_ENDPOINTS = Arrays.asList(
+        // CTI endpoints
         "/cti/getCommunications",
         "/cti/getClientPhones", 
         "/cti/call/init",
-        "/employees/{fullEmployeeNumber}/phones",
+        "/cti/positions/get",
         "/cti/sbpemployeeinfo/v1/employee",
-        "/clientcard/sbpemployeeinfo/v1/employee",
-        "/clientcard/positions/get",
-        "/clients/getClientCardFromCRMandEPK/rest/v1/context",
-        "/clientcard/employee/com.sbt.bpspe.core.json.rpc.api.Employee",
+        "/cti/setNotification",
+        "/employees/{fullEmployeeNumber}/phones",
+        
+        // Client endpoints
         "/clients/srvgetclientlist",
+        "/clients/srvgetclientlist/clients/searchByLastName",
         "/clients/pprbBhepService",
-        "/clients/teams/get", 
         "/clients/pprbClients",
+        "/clients/pprbClients/clients/getByTeamId",
+        "/clients/teams/get",
+        "/clients/ucpclients",
+        "/clients/ucpclients/clients/get",
+        "/clients/getClientCardFromCRMandEPK",
+        "/clients/getClientCardFromCRMandEPK/rest/v1/context",
+        "armsb/clients/v1/rest/getClientsForMassMailing",
+        
+        // Client Card endpoints  
+        "/clientcard/positions/get",
+        "/clientcard/sbpemployeeinfo/v1/employee",
+        "/clientcard/teams/get",
+        "/clientcard/employee/com.sbt.bpspe.core.json.rpc.api.Employee",
+        
+        // Task endpoints
+        "/tasks",
+        "/tasks/get",
         "/tasks/getByFilter",
+        "/tasks/getFilters",
         "/tasks/getTaskById",
         "/tasks/offers",
+        "/tasks/marking/check",
+        "/tasks/marking/getByClient",
         "/tasks/marking/getById",
         "/tasks/sbpemployeeinfo/v1/employee",
+        "/tasks/positions/get",
+        "/tasks/teams/get",
+        "/tasks/teams/free",
+        "/tasks/clients/get",
+        "/tasks/clients/getByTeamId",
+        "/tasks/data-dictionary-service/rest/pm/ver.4.0/getRows",
+        
+        // Template endpoints
         "/templates/get",
         "/templates/getFilters",
         "/templates/update",
+        
+        // Values endpoints
+        "/values/get",
+        "/values/update",
+        
+        // General endpoints
+        "/sbpemployeeinfo/v1/employee",
+        "/employee/com.sbt.bpspe.core.json.rpc.api.Employee",
+        "/services/create-structure",
+        "/send",
+        "/getCompanies",
+        "/getCountersByClients",
+        "/getGeneralCounters",
+        "/getInfoByCompanyId",
+        "/pprbNotification",
+        "/sbolpro/netscanbh/v1/file/setRegionConfig",
+        
+        // Legacy configuration endpoints (maintain for backward compatibility)
         "/setDelta/{delta}",
         "/getDelta",
         "/setDeltaForEndpoint",
         "/getDelayForEndpoint",
-        "/removeDelayForEndpoint"
+        "/removeDelayForEndpoint",
+        "/getAllDelays"
     );
     
     /**
@@ -141,7 +188,7 @@ public class DelayService {
     public void setDelayForEndpoint(String endpoint, long delay) {
         log.info("Setting delay for endpoint '{}' to: {} ms", endpoint, delay);
         endpointDelays.put(endpoint, delay);
-        updateApplicationYaml(endpoint, delay);
+        updateApplicationProperties(endpoint, delay);
     }
     
     public Long getDelayForEndpoint(String endpoint, boolean includeDefaults) {
@@ -166,76 +213,58 @@ public class DelayService {
     public void removeDelayForEndpoint(String endpoint) {
         log.info("Removing delay configuration for endpoint: {}", endpoint);
         endpointDelays.remove(endpoint);
-        removeDelayFromApplicationYaml(endpoint);
+        removeDelayFromApplicationProperties(endpoint);
     }
     
-    private void updateApplicationYaml(String endpoint, long delay) {
+    private void updateApplicationProperties(String endpoint, long delay) {
         try {
-            Yaml yaml = createYaml();
-            Map<String, Object> data = loadYamlFile(yaml);
+            Properties props = loadPropertiesFile();
             
-            // Navigate to armsb.mock.delays section
-            Map<String, Object> armsb = (Map<String, Object>) data.computeIfAbsent("armsb", k -> new LinkedHashMap<>());
-            Map<String, Object> mock = (Map<String, Object>) armsb.computeIfAbsent("mock", k -> new LinkedHashMap<>());
-            Map<String, Object> delays = (Map<String, Object>) mock.computeIfAbsent("delays", k -> new LinkedHashMap<>());
+            // Create the property key for this endpoint
+            String propertyKey = "armsb.mock.delays." + endpoint;
             
             // Update the delay
-            delays.put(endpoint, delay);
+            props.setProperty(propertyKey, String.valueOf(delay));
             
             // Write back to file
-            writeYamlFile(yaml, data);
+            writePropertiesFile(props);
             
-            log.info("Successfully updated application.yaml with delay for endpoint '{}': {} ms", endpoint, delay);
+            log.info("Successfully updated application.properties with delay for endpoint '{}': {} ms", endpoint, delay);
         } catch (Exception e) {
-            log.error("Failed to update application.yaml with delay for endpoint '{}': {}", endpoint, e.getMessage(), e);
+            log.error("Failed to update application.properties with delay for endpoint '{}': {}", endpoint, e.getMessage(), e);
         }
     }
     
-    private void removeDelayFromApplicationYaml(String endpoint) {
+    private void removeDelayFromApplicationProperties(String endpoint) {
         try {
-            Yaml yaml = createYaml();
-            Map<String, Object> data = loadYamlFile(yaml);
+            Properties props = loadPropertiesFile();
             
-            // Navigate to armsb.mock.delays section
-            Map<String, Object> armsb = (Map<String, Object>) data.get("armsb");
-            if (armsb != null) {
-                Map<String, Object> mock = (Map<String, Object>) armsb.get("mock");
-                if (mock != null) {
-                    Map<String, Object> delays = (Map<String, Object>) mock.get("delays");
-                    if (delays != null) {
-                        delays.remove(endpoint);
-                        
-                        // Write back to file
-                        writeYamlFile(yaml, data);
-                        
-                        log.info("Successfully removed delay from application.yaml for endpoint: {}", endpoint);
-                    }
-                }
-            }
+            // Create the property key for this endpoint
+            String propertyKey = "armsb.mock.delays." + endpoint;
+            
+            // Remove the property
+            props.remove(propertyKey);
+            
+            // Write back to file
+            writePropertiesFile(props);
+            
+            log.info("Successfully removed delay from application.properties for endpoint: {}", endpoint);
         } catch (Exception e) {
-            log.error("Failed to remove delay from application.yaml for endpoint '{}': {}", endpoint, e.getMessage(), e);
+            log.error("Failed to remove delay from application.properties for endpoint '{}': {}", endpoint, e.getMessage(), e);
         }
     }
     
-    private Yaml createYaml() {
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        options.setPrettyFlow(true);
-        options.setIndent(2);
-        return new Yaml(options);
-    }
-    
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> loadYamlFile(Yaml yaml) throws IOException {
+    private Properties loadPropertiesFile() throws IOException {
+        Properties props = new Properties();
         try (FileInputStream inputStream = new FileInputStream(configFile)) {
-            Map<String, Object> data = yaml.load(inputStream);
-            return data != null ? data : new LinkedHashMap<>();
+            props.load(inputStream);
         }
+        return props;
     }
     
-    private void writeYamlFile(Yaml yaml, Map<String, Object> data) throws IOException {
+    private void writePropertiesFile(Properties props) throws IOException {
         try (FileWriter writer = new FileWriter(configFile)) {
-            yaml.dump(data, writer);
+            props.store(writer, "ARMSB Mock Configuration - Updated by DelayService");
         }
     }
 }
