@@ -56,6 +56,23 @@ mvn clean package
 
 ## Running the Services
 
+### Quick Start - All Services at Once
+
+Use the provided convenience scripts to start/stop all services:
+
+```bash
+# Start all 6 services in parallel
+./start-all-services.sh
+
+# Stop all services  
+./stop-all-services.sh
+```
+
+The `start-all-services.sh` script will:
+- Start all 6 services in the background
+- Create log files in `logs/` directory for each service
+- Show the status and URLs for all services
+
 ### Running All Services Simultaneously
 
 You can run all services in parallel using separate terminal windows/tabs:
